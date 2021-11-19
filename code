@@ -1,0 +1,312 @@
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+
+#define V 9
+
+
+int minDistance(int dist[], bool sptSet[])
+{
+
+
+    int min = 10000, min_index;
+
+    for (int v = 0; v < V; v++)
+        if (sptSet[v] == false && dist[v] <= min)
+            min = dist[v], min_index = v;
+
+    return min_index;
+}
+void printPath(int parent[], int j,int src)
+{
+
+
+    if (parent[j] == - 1)
+    { cout<<src<<" ";
+        return;}
+
+    printPath(parent, parent[j],src);
+
+    printf("%d ", j);
+}
+
+
+void printSolution(int dist[],int parent[],int destination,int src)
+{
+
+    cout<<"The path you have to follow is: "<<endl;
+
+        printPath(parent, destination, src);
+        cout<<endl;
+        cout <<"The time it will take to reach your destination is "<< dist[destination]<< " minutes"<<endl;
+
+}
+void dijkstra1(int graph[V][V], int src, int destination)
+{
+    int dist[V];
+    bool sptSet[V];
+    int parent[V];
+
+
+    for (int i = 0; i < V; i++)
+        {dist[i] = 10000;
+        sptSet[i] = false;
+        }
+    parent[src]=-1;
+
+
+    dist[src] = 0;
+
+
+    for (int count = 0; count < V - 1; count++) {
+
+        int u = minDistance(dist, sptSet);
+
+
+        sptSet[u] = true;
+        if(sptSet[destination]==true)
+            break;
+
+
+        for (int v = 0; v < V; v++)
+
+
+            if (!sptSet[v] && graph[u][v] && dist[u] + graph[u][v] < dist[v])
+            {parent[v] = u;
+                dist[v] = dist[u] + graph[u][v];}
+    }
+
+
+    printSolution(dist,parent,destination,src);
+}
+
+int dijkstra(int graph[V][V], int src, int destination)
+{
+    int dist[V];
+    bool sptSet[V];
+    int parent[V];
+
+
+    for (int i = 0; i < V; i++)
+        {dist[i] = 10000;
+        sptSet[i] = false;
+        }
+    parent[src]=-1;
+
+
+    dist[src] = 0;
+
+
+    for (int count = 0; count < V - 1; count++) {
+
+        int u = minDistance(dist, sptSet);
+
+
+        sptSet[u] = true;
+        if(sptSet[destination]==true)
+            break;
+
+
+        for (int v = 0; v < V; v++)
+
+            if (!sptSet[v] && graph[u][v] && dist[u] + graph[u][v] < dist[v])
+            {parent[v] = u;
+                dist[v] = dist[u] + graph[u][v];}
+    }
+
+    return dist[destination];
+}
+
+
+int main()
+{ int x,y,number;
+
+string option;
+
+
+    int graph[V][V] = { { 0, 4, 0, 0, 0, 0, 0, 8, 0 },
+                        { 4, 0, 8, 0, 0, 0, 0, 11, 0 },
+                        { 0, 8, 0, 7, 0, 4, 0, 0, 2 },
+                        { 0, 0, 7, 0, 9, 14, 0, 0, 0 },
+                        { 0, 0, 0, 9, 0, 10, 0, 0, 0 },
+                        { 0, 0, 4, 14, 10, 0, 2, 0, 0 },
+                        { 0, 0, 0, 0, 0, 2, 0, 1, 6 },
+                        { 8, 11, 0, 0, 0, 0, 1, 0, 7 },
+                        { 0, 0, 2, 0, 0, 0, 6, 7, 0 } };
+
+    // Drawing the graph
+    cout<<"   1--2-----3                    0-Home"<<endl;
+    cout<<"  /|  |\\    |\\                   1-mosque"<<endl;
+    cout<<" / |  | \\   | \\                  2-temple"<<endl;
+    cout<<"0  |  8  \\  |  4                 3-office"<<endl;
+    cout<<" \\ | /|   \\ | /                  4-school"<<endl;
+    cout<<"  \\|/ |    \\|/                   5-park"<<endl;
+    cout<<"   7--6-----5                    6-church"<<endl;
+    cout<<"                                 7-college"<<endl;
+    cout<<"                                 8-zoo"<<endl;
+    cout<<endl;
+
+    cout<<"Would you like to travel to a single destination or multiple destinations?"<<endl;
+    try
+        {
+            cin>>option;
+            if (option!="single" && option!="SINGLE" && option!="multiple" && option!="MULTIPLE" )
+            throw option;
+        }
+        catch(string option)
+        {
+           cout<<"Please enter a valid option"<<endl;
+           exit(0);
+        }
+    if (option=="single" || option=="SINGLE" )
+    {cout<<"enter your current location (node number)"<<endl;
+    try
+    {
+    cin>>x;
+    if(x>8)
+    {
+        throw x;
+    }
+    }
+    catch(int x)
+    {
+        cout<<"enter a value between 0 and 8"<<endl;
+        exit(0);
+    }
+    cout<<"enter the number of the destination node"<<endl;
+    try
+    {
+    cin>>y;
+    if(y>8)
+    {
+        throw y;
+    }
+    }
+    catch(int y)
+    {
+        cout<<"enter a value between 0 and 8"<<endl;
+        exit(0);
+    }
+    dijkstra1(graph,x,y);}
+    else if(option=="multiple" || option=="MULTIPLE")
+    {
+
+        cout<<"How many nodes would u like to visit? "<<endl;
+        try
+        {
+           cin>>number;
+           if (number>8)
+           {
+               throw number;
+           }
+        }
+        catch(int number)
+        {
+            cout<<"Please enter a value between 0 and 8"<<endl;
+           exit(0);
+        }
+
+        int arr[number+1];
+        int path[number];
+        int Graph[number+1][number+1];
+
+        x=0;
+        arr[0]=0;
+
+        cout<<"enter the the destination nodes"<<endl;
+        //storing the destination nodes
+        for(int i=1;i<=number;i++)
+        {try
+            {cin>>arr[i];
+            if(arr[i]==0 || arr[i]>8)
+            throw arr[i];
+            }
+            catch (int x)
+            {
+                cout<<"Please enter a valid input"<<endl;
+                exit(0);
+            }
+        }
+        //creating the cost adjacency matrix for the destination nodes
+        for(int j=0;j<=number;j++)
+        {
+        for(int i=0;i<=number;i++)
+        {
+          Graph[j][i]=dijkstra(graph,arr[j],arr[i]);
+        }
+        }
+
+        // store all vertex apart from source vertex
+    vector<int> vertex;
+    for (int i = 0; i <=number; i++)
+        if (arr[i] != x)
+            vertex.push_back(arr[i]);
+
+    int min_path = INT_MAX;
+    do {
+        for (int i = 0; i<vertex.size(); i++) {
+            arr[i+1]=vertex[i];
+        }
+        //creating the cost adjacency matrix for the destination nodes
+        for(int j=0;j<=number;j++)
+        {
+        for(int i=0;i<=number;i++)
+        {
+          Graph[j][i]=dijkstra(graph,arr[j],arr[i]);
+        }
+        }
+
+        // store current Path weight(cost)
+        int current_pathweight = 0;
+
+        // compute current path weight
+        int k = x;
+        for (int i = 1; i<=vertex.size(); i++) {
+            current_pathweight += Graph[k][i];
+            k = i;
+        }
+        current_pathweight += Graph[k][x];
+
+        // update minimum
+        if(current_pathweight<min_path)
+        {
+            min_path=current_pathweight;
+            for (int i = 0; i<vertex.size(); i++) {
+            path[i]=vertex[i];
+        }
+
+        }
+
+
+    } while (
+        next_permutation(vertex.begin(), vertex.end()));
+
+     cout<<"The least time it will take to visit all these nodes is "<<min_path<<" minutes"<<endl;
+     cout<<"The order in which you have to visit the nodes is 0 ";
+     for (int i = 0; i<vertex.size(); i++) {
+            cout<<path[i]<<" ";
+        }
+
+     cout<<" 0";
+     cout<<endl;
+     cout<<endl;
+     cout<<"The route is as follows: "<<endl;
+     cout<<endl;
+     dijkstra1(graph,0,path[0]);
+      for (int i = 1; i<vertex.size(); i++) {
+            dijkstra1(graph,path[i-1],path[i]);
+        }
+         dijkstra1(graph,path[vertex.size()-1],0);
+
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
